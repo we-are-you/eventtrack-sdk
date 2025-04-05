@@ -1,0 +1,39 @@
+{
+  "name": "eventtrack-sdk",
+  "version": "0.1.0",
+  "description": "Event tracking SDK with ESM and CJS support",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "events",
+    "tracking",
+    "sdk"
+  ],
+  "author": "Christian Linke <info@we-are-you.de>",
+  "private": false,
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.0",
+    "prettier": "^3.4.2"
+  }
+}
