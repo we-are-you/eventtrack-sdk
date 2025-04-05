@@ -1,5 +1,5 @@
 {
-  "name": "eventtrack-sdk",
+  "name": "@wru/eventtrack",
   "version": "0.1.0",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
@@ -28,6 +28,14 @@
   "author": "Christian Linke <info@we-are-you.de>",
   "private": false,
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/we-are-you/eventtrack-sdk"
+  },
+  "homepage": "https://eventtrack.dev",
+  "bugs": {
+    "url": "https://github.com/we-are-you/eventtrack-sdk/issues"
+  },
   "dependencies": {
     "zod": "^3.22.4"
   },
