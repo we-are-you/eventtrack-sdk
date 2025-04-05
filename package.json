@@ -1,24 +1,32 @@
 {
   "name": "@wru/eventtrack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
-    "prepare": "npm run build"
+    "build": "npm run build:types && npm run build:js",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:js": "node build.js",
+    "prepare": "npm run build",
+    "dev": "npm run build && http-server . -p 3001 -c-1 --cors"
   },
   "keywords": [
     "events",
@@ -42,6 +50,9 @@
   "devDependencies": {
     "typescript": "^5.0.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
-    "prettier": "^3.4.2"
-  }
+    "prettier": "^3.4.2",
+    "http-server": "^14.1.1",
+    "esbuild": "^0.20.0"
+  },
+  "sideEffects": false
 }

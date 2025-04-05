@@ -16,9 +16,7 @@ npm install @wru/eventtrack
 import { EventTrack } from '@wru/eventtrack'
 
 // Initialize with your API key
-const tracker = new EventTrack('your-api-key', {
-    apiUrl: 'https://eventtrack.dev/openapi', // Optional, defaults to production URL
-})
+const tracker = new EventTrack('your-api-key')
 
 // Log a basic event
 await tracker.log({

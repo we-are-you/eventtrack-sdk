@@ -1,4 +1,4 @@
-import { type EventData, eventSchema } from './schemas'
+import { type EventData, eventSchema } from './schemas.js'
 
 export interface EventTrackConfig {
     /**
@@ -12,7 +12,7 @@ export class EventTrack {
     private readonly apiKey: string
     private readonly apiUrl: string
 
-    private static readonly DEFAULT_API_URL = 'https://eventtrack.dev/openapi'
+    private static readonly DEFAULT_API_URL = 'https://eventtrack.dev'
 
     /**
      * Creates a new instance of EventTrack
@@ -50,7 +50,7 @@ export class EventTrack {
         // Validate event data
         const validatedData = eventSchema.parse(data)
 
-        const url = new URL('/events', this.apiUrl)
+        const url = new URL('/openapi/events', this.apiUrl)
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -70,7 +70,7 @@ export class EventTrack {
      * @returns Promise that resolves when the ping is complete
      */
     async ping(): Promise<void> {
-        const url = new URL('/ping', this.apiUrl)
+        const url = new URL('/openapi/ping', this.apiUrl)
         const response = await fetch(url, {
             method: 'POST',
             headers: {

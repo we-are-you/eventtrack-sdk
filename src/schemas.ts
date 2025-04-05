@@ -32,7 +32,7 @@ export const eventSchema = z.object({
     groupBy: z
         .string()
         .optional()
-        .superRefine((val, ctx) => {
+        .superRefine((val: string | undefined, ctx) => {
             const data = (ctx as any)._parent?.data as { fields?: Record<string, any>, category?: string }
             if (!validateGroupBy(val, data)) {
                 ctx.addIssue({
