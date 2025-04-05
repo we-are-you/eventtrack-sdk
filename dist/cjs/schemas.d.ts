@@ -21,7 +21,7 @@ export declare const eventSchema: z.ZodObject<{
     date: z.ZodDefault<z.ZodOptional<z.ZodDate>>;
     notify: z.ZodOptional<z.ZodBoolean>;
     fields: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
-    groupBy: z.ZodOptional<z.ZodString>;
+    groupBy: z.ZodEffects<z.ZodOptional<z.ZodString>, string | undefined, string | undefined>;
     actions: z.ZodOptional<z.ZodArray<z.ZodObject<{
         url: z.ZodString;
         label: z.ZodString;

@@ -10,6 +10,16 @@ exports.actionSchema = zod_1.z.object({
     label: zod_1.z.string(),
 });
 /**
+ * Custom validator to check if groupBy matches a field or category
+ */
+function validateGroupBy(val, data) {
+    if (!val)
+        return true;
+    if (val === 'category' && data.category)
+        return true;
+    return data.fields ? val in data.fields : false;
+}
+/**
  * Schema for event data
  */
 exports.eventSchema = zod_1.z.object({
@@ -21,6 +31,17 @@ exports.eventSchema = zod_1.z.object({
         .default(() => new Date()),
     notify: zod_1.z.boolean().optional(),
     fields: zod_1.z.record(zod_1.z.string(), zod_1.z.any()).optional(),
-    groupBy: zod_1.z.string().optional(),
+    groupBy: zod_1.z
+        .string()
+        .optional()
+        .superRefine((val, ctx) => {
+        const data = ctx._parent?.data;
+        if (!validateGroupBy(val, data)) {
+            ctx.addIssue({
+                code: zod_1.z.ZodIssueCode.custom,
+                message: 'groupBy must match a key in fields or be "category" if category is set',
+            });
+        }
+    }),
     actions: zod_1.z.array(exports.actionSchema).optional(),
 });

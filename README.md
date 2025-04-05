@@ -1,10 +1,8 @@
 # EventTrack SDK
 
-A proprietary event tracking SDK that supports both ESM and CommonJS.
+A proprietary event tracking SDK for logging and monitoring events.
 
-## License
-
-This is proprietary software. Usage is only permitted with a valid API key obtained through authorized We Are You SaaS projects. See the [LICENSE](LICENSE) file for details.
+Website: [https://eventtrack.dev](https://eventtrack.dev)
 
 ## Installation
 
@@ -14,98 +12,77 @@ npm install eventtrack-sdk
 
 ## Usage
 
-The SDK requires a valid API key that can be obtained through our services. The API key must be exactly 32 characters and can only contain alphanumeric characters (A-Z, a-z, 0-9).
-
-### Basic Usage
-
-#### ESM
 ```javascript
 import { EventTrack } from 'eventtrack-sdk';
 
-const tracker = new EventTrack('YOUR32CHARACTERAPIKEYGOESHERE12345');
+// Initialize with your API key
+const tracker = new EventTrack('your-api-key', {
+    apiUrl: 'https://api.eventtrack.dev' // Optional, defaults to production URL
+});
 
-// Log an event
+// Log a basic event
 await tracker.log({
-  title: 'Page View',
-  category: 'analytics',
-  fields: {
-    page: '/home',
-    referrer: document.referrer
-  },
-  actions: [
-    { url: 'https://example.com/action', label: 'Take Action' }
-  ]
+    title: 'User Login',
+    category: 'auth'
 });
 
-// Send a ping
+// Log an event with fields and grouping
+await tracker.log({
+    title: 'Purchase Completed',
+    category: 'transactions',
+    fields: {
+        orderId: '12345',
+        amount: 99.99,
+        currency: 'USD'
+    },
+    groupBy: 'currency' // Group by a field key or 'category'
+});
+
+// Log an event with actions
+await tracker.log({
+    title: 'Document Created',
+    category: 'documents',
+    actions: [
+        { url: 'https://example.com/view', label: 'View Document' },
+        { url: 'https://example.com/edit', label: 'Edit Document' }
+    ]
+});
+
+// Check server connectivity
 await tracker.ping();
-```
-
-#### CommonJS
-```javascript
-const { EventTrack } = require('eventtrack-sdk');
-
-const tracker = new EventTrack('YOUR32CHARACTERAPIKEYGOESHERE12345');
-
-// Log an event
-tracker.log({
-  title: 'Button Click',
-  category: 'interaction',
-  notify: true
-}).then(() => console.log('Event logged'));
-
-// Send a ping
-tracker.ping()
-  .then(() => console.log('Ping sent'));
-```
-
-### Development Configuration
-
-For development purposes, you can override the API URL:
-
-```javascript
-const tracker = new EventTrack('YOUR32CHARACTERAPIKEYGOESHERE12345', {
-  apiUrl: 'http://localhost:3000'
-});
 ```
 
 ## Event Schema
 
-The `log` method accepts an event object with the following schema:
+Events in EventTrack SDK follow a strict schema for consistency and reliability:
 
-```typescript
-{
-  title: string;           // Required - The title of the event (min 3 chars)
-  category?: string;       // Optional - Category for grouping events (min 3 chars)
-  date?: Date;            // Optional - Event date (defaults to current time)
-  notify?: boolean;       // Optional - Whether to trigger notifications
-  fields?: {              // Optional - Additional custom fields
-    [key: string]: any;
-  };
-  groupBy?: string;       // Optional - Field to group events by
-  actions?: {             // Optional - Array of action buttons
-    url: string;          // Valid URL for the action
-    label: string;        // Display label for the action
-  }[];
-}
-```
+### Required Fields
+- `title` (string): Event title, minimum 3 characters
 
-All fields are validated using Zod schema validation. Invalid data will throw an error.
+### Optional Fields
+- `category` (string): Event category, minimum 3 characters
+- `date` (Date): Event timestamp, defaults to current time
+- `notify` (boolean): Whether the event should trigger notifications
+- `fields` (object): Custom key-value pairs for additional data
+- `groupBy` (string): Group events by a field key or 'category'
+- `actions` (array): List of action buttons, each with:
+  - `url` (string): Valid URL for the action
+  - `label` (string): Display text for the action
 
-## API Methods
-
-### log(data)
-Sends event data to the tracking API.
-- `data`: An object matching the event schema above
-- Returns: Promise that resolves when logging is complete
-- Throws: Error if the event data is invalid or the request fails
-
-### ping()
-Sends a ping request to verify connectivity.
-- Returns: Promise that resolves when ping is complete
-- Throws: Error if the request fails
+### Validation Rules
+- Title and category must be at least 3 characters long
+- Action URLs must be valid URLs
+- `groupBy` must reference either:
+  - An existing key in the `fields` object
+  - The string 'category' when category is set
+- All dates are automatically converted to ISO format
 
 ## Support
 
-For support or licensing inquiries, please contact:
-Christian Linke (info@we-are-you.de)
+For support inquiries, please contact support@eventtrack.dev
+
+## License
+
+This is proprietary software. See the LICENSE file for details.
+
+Copyright 2025 WRU Design Agentur UG (haftungsbeschränkt)

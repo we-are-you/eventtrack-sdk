@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EventTrack SDK Test</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            .test-section {
+                margin-bottom: 2rem;
+                padding: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .test-section h2 {
+                margin-top: 0;
+            }
+            button {
+                padding: 0.5rem 1rem;
+                margin: 0.5rem;
+                border: none;
+                border-radius: 4px;
+                background: #0066cc;
+                color: white;
+                cursor: pointer;
+            }
+            button:hover {
+                background: #0052a3;
+            }
+            #results {
+                margin-top: 1rem;
+                padding: 1rem;
+                background: #f5f5f5;
+                border-radius: 4px;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            .success {
+                color: #2da44e;
+            }
+            .error {
+                color: #cf222e;
+            }
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>EventTrack SDK Test</h1>
+
+        <div class="test-section">
+            <h2>Configuration</h2>
+            <div>
+                <label for="apiKey">API Key:</label>
+                <input
+                    type="text"
+                    id="apiKey"
+                    value="12345678901234567890123456789012"
+                    style="width: 300px"
+                />
+            </div>
+            <div>
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://localhost:3000" style="width: 300px" />
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Basic Events</h2>
+            <button onclick="testBasicEvent()">Log Basic Event</button>
+            <button onclick="testWithCategory()">Log with Category</button>
+            <button onclick="testWithFields()">Log with Fields</button>
+            <button onclick="testWithNotification()">Log with Notification</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Advanced Events</h2>
+            <button onclick="testWithActions()">Log with Actions</button>
+            <button onclick="testWithGrouping()">Log with Grouping</button>
+            <button onclick="testWithJson()">Log with JSON</button>
+            <button onclick="testWithCustomDate()">Log with Custom Date</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Error Cases</h2>
+            <button onclick="testShortTitle()">Short Title (Error)</button>
+            <button onclick="testInvalidCategory()">Invalid Category (Error)</button>
+            <button onclick="testInvalidAction()">Invalid Action URL (Error)</button>
+            <button onclick="testInvalidGroupBy()">Invalid GroupBy (Error)</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Ping Test</h2>
+            <button onclick="testPing()">Send Ping</button>
+        </div>
+
+        <div id="results">
+            <em>Test results will appear here...</em>
+        </div>
+
+        <script type="module">
+            import { EventTrack } from './dist/esm/index.js'
+
+            // Make tracker accessible globally
+            window.tracker = null
+
+            function initTracker() {
+                const apiKey = document.getElementById('apiKey').value
+                const apiUrl = document.getElementById('apiUrl').value
+                window.tracker = new EventTrack(apiKey, { apiUrl })
+            }
+
+            function logResult(message, isError = false, data = null) {
+                const results = document.getElementById('results')
+                const entry = document.createElement('div')
+                entry.className = isError ? 'error' : 'success'
+
+                if (data) {
+                    const time = document.createElement('span')
+                    time.textContent = `${new Date().toLocaleTimeString()} - `
+                    const msg = document.createElement('span')
+                    msg.textContent = message
+                    const pre = document.createElement('pre')
+                    pre.textContent = JSON.stringify(data, null, 2)
+
+                    entry.appendChild(time)
+                    entry.appendChild(msg)
+                    entry.appendChild(document.createElement('br'))
+                    entry.appendChild(pre)
+                } else {
+                    entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`
+                }
+
+                results.insertBefore(entry, results.firstChild)
+            }
+
+            // Make test functions accessible globally
+            window.testBasicEvent = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Basic Test Event',
+                    })
+                    logResult('Basic event logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithCategory = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Categorized Event',
+                        category: 'test-events',
+                    })
+                    logResult('Categorized event logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithFields = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Event with Fields',
+                        fields: {
+                            userId: 123,
+                            browser: navigator.userAgent,
+                            timestamp: Date.now(),
+                        },
+                    })
+                    logResult('Event with fields logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithNotification = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Notification Event',
+                        notify: true,
+                        category: 'notifications',
+                    })
+                    logResult('Notification event logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithActions = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Event with Actions',
+                        actions: [
+                            { url: 'https://example.com/action1', label: 'Action 1' },
+                            { url: 'https://example.com/action2', label: 'Action 2' },
+                        ],
+                    })
+                    logResult('Event with actions logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithGrouping = async () => {
+                try {
+                    initTracker()
+                    const eventData = {
+                        title: 'Grouped Event',
+                        fields: {
+                            groupId: 'group-123',
+                            category: 'test',
+                        },
+                        groupBy: 'category', // Matches a key in fields
+                    }
+                    await tracker.log(eventData)
+                    logResult('Grouped event logged successfully', false, eventData)
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithJson = async () => {
+                try {
+                    initTracker()
+                    const eventData = {
+                        title: 'JSON Data Event',
+                        fields: {
+                            json: {
+                                user: {
+                                    id: 123,
+                                    name: 'Test User',
+                                    preferences: {
+                                        theme: 'dark',
+                                        notifications: true,
+                                    },
+                                },
+                                metadata: {
+                                    version: '1.0.0',
+                                    timestamp: new Date().toISOString(),
+                                },
+                            },
+                        },
+                    }
+                    await tracker.log(eventData)
+                    logResult('JSON event logged successfully', false, eventData)
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testWithCustomDate = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Custom Date Event',
+                        date: new Date('2024-01-01T00:00:00Z'),
+                    })
+                    logResult('Event with custom date logged successfully')
+                } catch (error) {
+                    logResult(`Error: ${error.message}`, true)
+                }
+            }
+
+            window.testShortTitle = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'ab', // Too short, should fail
+                    })
+                    logResult('Event logged (unexpected)', true)
+                } catch (error) {
+                    logResult(`Validation caught short title: ${error.message}`)
+                }
+            }
+
+            window.testInvalidCategory = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Invalid Category Test',
+                        category: 'ab', // Too short, should fail
+                    })
+                    logResult('Event logged (unexpected)', true)
+                } catch (error) {
+                    logResult(`Validation caught invalid category: ${error.message}`)
+                }
+            }
+
+            window.testInvalidAction = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Invalid Action Test',
+                        actions: [
+                            { url: 'not-a-url', label: 'Invalid' }, // Invalid URL, should fail
+                        ],
+                    })
+                    logResult('Event logged (unexpected)', true)
+                } catch (error) {
+                    logResult(`Validation caught invalid action URL: ${error.message}`)
+                }
+            }
+
+            window.testInvalidGroupBy = async () => {
+                try {
+                    initTracker()
+                    await tracker.log({
+                        title: 'Invalid GroupBy Test',
+                        fields: {
+                            existingField: 'value',
+                        },
+                        groupBy: 'nonexistentField', // Field doesn't exist, should fail
+                    })
+                    logResult('Event logged (unexpected)', true)
+                } catch (error) {
+                    logResult(`Validation caught invalid groupBy: ${error.message}`)
+                }
+            }
+
+            window.testPing = async () => {
+                try {
+                    initTracker()
+                    await tracker.ping()
+                    logResult('Ping successful')
+                } catch (error) {
+                    logResult(`Ping failed: ${error.message}`, true)
+                }
+            }
+        </script>
+    </body>
+</html>

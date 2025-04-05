@@ -7,6 +7,16 @@ export const actionSchema = z.object({
     label: z.string(),
 });
 /**
+ * Custom validator to check if groupBy matches a field or category
+ */
+function validateGroupBy(val, data) {
+    if (!val)
+        return true;
+    if (val === 'category' && data.category)
+        return true;
+    return data.fields ? val in data.fields : false;
+}
+/**
  * Schema for event data
  */
 export const eventSchema = z.object({
@@ -18,6 +28,17 @@ export const eventSchema = z.object({
         .default(() => new Date()),
     notify: z.boolean().optional(),
     fields: z.record(z.string(), z.any()).optional(),
-    groupBy: z.string().optional(),
+    groupBy: z
+        .string()
+        .optional()
+        .superRefine((val, ctx) => {
+        const data = ctx._parent?.data;
+        if (!validateGroupBy(val, data)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'groupBy must match a key in fields or be "category" if category is set',
+            });
+        }
+    }),
     actions: z.array(actionSchema).optional(),
 });
