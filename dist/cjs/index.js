@@ -4109,16 +4109,16 @@ var eventSchema = z.object({
   date: z.date().optional().default(() => /* @__PURE__ */ new Date()),
   notify: z.boolean().optional(),
   fields: z.record(z.string(), z.any()).optional(),
-  groupBy: z.string().optional().superRefine((val, ctx) => {
-    const data = ctx._parent?.data;
-    if (!validateGroupBy(val, data)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'groupBy must match a key in fields or be "category" if category is set'
-      });
-    }
-  }),
+  groupBy: z.string().optional(),
   actions: z.array(actionSchema).optional()
+}).superRefine((data, ctx) => {
+  const testData = data;
+  if (!validateGroupBy(testData.groupBy, testData)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'groupBy must match a key in fields or be "category" if category is set'
+    });
+  }
 });
 
 // src/EventTrack.ts
@@ -4154,7 +4154,13 @@ var EventTrack = class _EventTrack {
    * @throws {Error} If the event data is invalid or the request fails
    */
   async log(data) {
-    const validatedData = eventSchema.parse(data);
+    const validatedData = eventSchema.safeParse(data);
+    if (!validatedData.success) {
+      return {
+        status: "error",
+        message: validatedData.error.message
+      };
+    }
     const url = new URL("/openapi/events", this.apiUrl);
     const response = await fetch(url, {
       method: "POST",
@@ -4162,11 +4168,15 @@ var EventTrack = class _EventTrack {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`
       },
-      body: JSON.stringify(validatedData)
+      body: JSON.stringify(validatedData.data)
     });
     if (!response.ok) {
-      throw new Error(`Failed to log event: ${response.statusText}`);
+      return {
+        status: "error",
+        message: response.statusText
+      };
     }
+    return await response.json();
   }
   /**
    * Sends a ping event

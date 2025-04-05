@@ -8,6 +8,11 @@ export interface EventTrackConfig {
     apiUrl?: string
 }
 
+export interface LogResponse {
+    success: boolean
+    message?: string
+}
+
 export class EventTrack {
     private readonly apiKey: string
     private readonly apiUrl: string
@@ -46,9 +51,16 @@ export class EventTrack {
      * @returns Promise that resolves when the logging is complete
      * @throws {Error} If the event data is invalid or the request fails
      */
-    async log(data: EventData): Promise<void> {
+    async log(data: EventData): Promise<any> {
         // Validate event data
-        const validatedData = eventSchema.parse(data)
+        const validatedData = eventSchema.safeParse(data)
+
+        if (!validatedData.success) {
+            return {
+                status: 'error',
+                message: validatedData.error.message,
+            }
+        }
 
         const url = new URL('/openapi/events', this.apiUrl)
         const response = await fetch(url, {
@@ -57,12 +69,17 @@ export class EventTrack {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${this.apiKey}`,
             },
-            body: JSON.stringify(validatedData),
+            body: JSON.stringify(validatedData.data),
         })
 
         if (!response.ok) {
-            throw new Error(`Failed to log event: ${response.statusText}`)
+            return {
+                status: 'error',
+                message: response.statusText,
+            }
         }
+
+        return await response.json()
     }
 
     /**

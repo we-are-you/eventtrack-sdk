@@ -148,199 +148,175 @@
                     const apiUrl = document.getElementById('apiUrl').value
                     try {
                         window.tracker = new window.EventTrack(apiKey, { apiUrl })
-                        logResult('Tracker initialized successfully')
+                        logMessage('Tracker initialized', true)
                     } catch (error) {
-                        logResult('Failed to initialize tracker: ' + error.message, true)
+                        logMessage('Tracker initialization failed', false)
                     }
                 }
 
-                window.logResult = function (message, isError = false, data = null) {
+                window.logMessage = function (message, success) {
+                    const results = document.getElementById('results')
+                    const entry = document.createElement('div')
+                    entry.className = success ? 'success' : 'error'
+
+                    entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`
+                    results.insertBefore(entry, results.firstChild)
+                }
+
+                window.logResult = function (category, data = null) {
+                    const isError = data?.status !== 'ok'
+
                     const results = document.getElementById('results')
                     const entry = document.createElement('div')
                     entry.className = isError ? 'error' : 'success'
 
-                    if (data) {
+                    if (isError && data?.message) {
+                        let parsedMessage
+
+                        try {
+                            parsedMessage = JSON.parse(data.message)
+                        } catch (e) {
+                            parsedMessage = data.message
+                        }
+
+                        const clonedData = { ...data }
+                        clonedData.message = parsedMessage
+
                         const time = document.createElement('span')
                         time.textContent = `${new Date().toLocaleTimeString()} - `
                         const msg = document.createElement('span')
-                        msg.textContent = message
+                        msg.textContent = category + ' - logged unsuccessfully'
                         const pre = document.createElement('pre')
-                        pre.textContent = JSON.stringify(data, null, 2)
+                        pre.textContent = JSON.stringify(clonedData, null, 2)
 
                         entry.appendChild(time)
                         entry.appendChild(msg)
                         entry.appendChild(document.createElement('br'))
                         entry.appendChild(pre)
                     } else {
-                        entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`
+                        entry.textContent = `${new Date().toLocaleTimeString()} - ${category} - logged successfully`
                     }
 
                     results.insertBefore(entry, results.firstChild)
                 }
 
                 window.testBasicEvent = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Basic Event Test',
-                        })
-                        logResult('Basic event logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Basic Event Test',
+                    })
+                    logResult('Basic Event', result)
                 }
 
                 window.testWithCategory = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Category Event Test',
-                            category: 'test-category',
-                        })
-                        logResult('Event with category logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Category Event Test',
+                        category: 'test-category',
+                    })
+                    logResult('Event with category', result)
                 }
 
                 window.testWithFields = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Fields Event Test',
-                            fields: {
-                                userId: '12345',
-                                action: 'click',
-                                page: '/home',
-                            },
-                        })
-                        logResult('Event with fields logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Fields Event Test',
+                        fields: {
+                            userId: '12345',
+                            action: 'click',
+                            page: '/home',
+                        },
+                    })
+                    logResult('Event with fields', result)
                 }
 
                 window.testWithNotification = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Notification Event Test',
-                            notify: true,
-                        })
-                        logResult('Event with notification logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Notification Event Test',
+                        notify: true,
+                    })
+                    logResult('Event with notification', result)
                 }
 
                 window.testWithActions = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Actions Event Test',
-                            actions: [
-                                { url: 'https://example.com/view', label: 'View' },
-                                { url: 'https://example.com/edit', label: 'Edit' },
-                            ],
-                        })
-                        logResult('Event with actions logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Actions Event Test',
+                        actions: [
+                            { url: 'https://example.com/view', label: 'View' },
+                            { url: 'https://example.com/edit', label: 'Edit' },
+                        ],
+                    })
+                    logResult('Event with actions', result)
                 }
 
                 window.testWithGrouping = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Grouping Event Test',
-                            category: 'test-category',
-                            fields: {
-                                type: 'user-action',
-                            },
-                            groupBy: 'type',
-                        })
-                        logResult('Event with grouping logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Grouping Event Test',
+                        category: 'test-category',
+                        fields: {
+                            type: 'user-action',
+                        },
+                        groupBy: 'type',
+                    })
+                    logResult('Event with grouping', result)
                 }
 
                 window.testWithJson = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'JSON Event Test',
-                            fields: {
-                                data: {
-                                    id: 1,
-                                    name: 'Test Object',
-                                    items: ['a', 'b', 'c'],
-                                },
+                    const result = await tracker.log({
+                        title: 'JSON Event Test',
+                        fields: {
+                            data: {
+                                id: 1,
+                                name: 'Test Object',
+                                items: ['a', 'b', 'c'],
                             },
-                        })
-                        logResult('Event with JSON logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                        },
+                    })
+
+                    logResult('Event with JSON', result)
                 }
 
                 window.testWithCustomDate = async function () {
-                    try {
-                        const result = await tracker.log({
-                            title: 'Custom Date Event Test',
-                            date: new Date('2025-01-01'),
-                        })
-                        logResult('Event with custom date logged successfully', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.log({
+                        title: 'Custom Date Event Test',
+                        date: new Date('2025-01-01'),
+                    })
+                    logResult('Event with custom date', result)
                 }
 
                 window.testShortTitle = async function () {
-                    try {
-                        await tracker.log({
-                            title: 'Hi',
-                        })
-                    } catch (error) {
-                        logResult('Short title error caught successfully', true, error)
-                    }
+                    const result = await tracker.log({
+                        title: 'Hi',
+                    })
+
+                    logResult('Short title error', result)
                 }
 
                 window.testInvalidCategory = async function () {
-                    try {
-                        await tracker.log({
-                            title: 'Invalid Category Test',
-                            category: 'a',
-                        })
-                    } catch (error) {
-                        logResult('Invalid category error caught successfully', true, error)
-                    }
+                    const result = await tracker.log({
+                        title: 'Invalid Category Test',
+                        category: 'a',
+                    })
+                    logResult('Invalid category error', result)
                 }
 
                 window.testInvalidAction = async function () {
-                    try {
-                        await tracker.log({
-                            title: 'Invalid Action Test',
-                            actions: [{ url: 'not-a-url', label: 'Invalid' }],
-                        })
-                    } catch (error) {
-                        logResult('Invalid action URL error caught successfully', true, error)
-                    }
+                    const result = await tracker.log({
+                        title: 'Invalid Action Test',
+                        actions: [{ url: 'not-a-url', label: 'Invalid' }],
+                    })
+                    logResult('Invalid action URL error', result)
                 }
 
                 window.testInvalidGroupBy = async function () {
-                    try {
-                        await tracker.log({
-                            title: 'Invalid GroupBy Test',
-                            fields: { a: 1 },
-                            groupBy: 'nonexistent',
-                        })
-                    } catch (error) {
-                        logResult('Invalid groupBy error caught successfully', true, error)
-                    }
+                    const result = await tracker.log({
+                        title: 'Invalid GroupBy Test',
+                        fields: { a: 1 },
+                        groupBy: 'nonexistent',
+                    })
+                    logResult('Invalid groupBy error', result)
                 }
 
                 window.testPing = async function () {
-                    try {
-                        const result = await tracker.ping()
-                        logResult('Ping successful', false, result)
-                    } catch (error) {
-                        logResult(error.message, true)
-                    }
+                    const result = await tracker.ping()
+                    logResult('Ping', result)
                 }
             }
         </script>
