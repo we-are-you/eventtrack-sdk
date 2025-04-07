@@ -62,6 +62,9 @@ export class EventTrack {
             }
         }
 
+        const eventData: EventData & { date?: string } = { ...validatedData.data }
+        eventData.date = new Date().toISOString()
+
         const url = new URL('/openapi/events', this.apiUrl)
         const response = await fetch(url, {
             method: 'POST',
@@ -69,7 +72,7 @@ export class EventTrack {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${this.apiKey}`,
             },
-            body: JSON.stringify(validatedData.data),
+            body: JSON.stringify(eventData),
         })
 
         if (!response.ok) {

@@ -27,10 +27,6 @@ export const eventSchema = z
     .object({
         title: z.string().min(3),
         category: z.string().min(3).optional(),
-        date: z
-            .date()
-            .optional()
-            .default(() => new Date()),
         notify: z.boolean().optional(),
         fields: z.record(z.string(), z.any()).optional(),
         groupBy: z.string().optional(),

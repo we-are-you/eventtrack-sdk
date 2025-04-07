@@ -4106,7 +4106,6 @@ function validateGroupBy(val, data) {
 var eventSchema = z.object({
   title: z.string().min(3),
   category: z.string().min(3).optional(),
-  date: z.date().optional().default(() => /* @__PURE__ */ new Date()),
   notify: z.boolean().optional(),
   fields: z.record(z.string(), z.any()).optional(),
   groupBy: z.string().optional(),
@@ -4161,6 +4160,8 @@ var EventTrack = class _EventTrack {
         message: validatedData.error.message
       };
     }
+    const eventData = { ...validatedData.data };
+    eventData.date = (/* @__PURE__ */ new Date()).toISOString();
     const url = new URL("/openapi/events", this.apiUrl);
     const response = await fetch(url, {
       method: "POST",
@@ -4168,7 +4169,7 @@ var EventTrack = class _EventTrack {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`
       },
-      body: JSON.stringify(validatedData.data)
+      body: JSON.stringify(eventData)
     });
     if (!response.ok) {
       return {
