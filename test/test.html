@@ -113,6 +113,14 @@
         </div>
 
         <div class="test-section">
+            <h2>Icon Events</h2>
+            <button onclick="testWithHexIcon()">Log with Hex Icon</button>
+            <button onclick="testWithImageIcon()">Log with Image Icon</button>
+            <button onclick="testWithEmojiIcon()">Log with Emoji Icon</button>
+            <button onclick="testInvalidIcon()">Invalid Icon (Error)</button>
+        </div>
+
+        <div class="test-section">
             <h2>Error Cases</h2>
             <button onclick="testShortTitle()">Short Title (Error)</button>
             <button onclick="testInvalidCategory()">Invalid Category (Error)</button>
@@ -279,6 +287,38 @@
                         date: new Date('2025-01-01'),
                     })
                     logResult('Event with custom date', result)
+                }
+
+                window.testWithHexIcon = async function () {
+                    const result = await tracker.log({
+                        title: 'Hex Icon Event Test',
+                        icon: '#FF5733',
+                    })
+                    logResult('Event with hex icon', result)
+                }
+
+                window.testWithImageIcon = async function () {
+                    const result = await tracker.log({
+                        title: 'Image Icon Event Test',
+                        icon: 'https://picsum.photos/200/200.jpg',
+                    })
+                    logResult('Event with image icon', result)
+                }
+
+                window.testWithEmojiIcon = async function () {
+                    const result = await tracker.log({
+                        title: 'Emoji Icon Event Test',
+                        icon: '👍',
+                    })
+                    logResult('Event with emoji icon', result)
+                }
+
+                window.testInvalidIcon = async function () {
+                    const result = await tracker.log({
+                        title: 'Invalid Icon Test',
+                        icon: 'invalid-icon',
+                    })
+                    logResult('Invalid icon error', result)
                 }
 
                 window.testShortTitle = async function () {

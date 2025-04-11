@@ -28,6 +28,26 @@ export const eventSchema = z
         title: z.string().min(3),
         category: z.string().min(3).optional(),
         notify: z.boolean().optional(),
+        icon: z
+            .string()
+            .refine(
+                (val) => {
+                    // Check if it's a hex color
+                    const isHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(val)
+                    // Check if it's a URL to an image
+                    const isImageUrl =
+                        /\.(jpg|jpeg|png|svg)$/i.test(val) && /^https?:\/\//.test(val)
+                    // Check if it's a single emoji (most emojis are 2 chars in JS)
+                    const isSingleEmoji = val.length <= 2
+
+                    return isHex || isImageUrl || isSingleEmoji
+                },
+                {
+                    message:
+                        'Icon must be either a hex color (e.g. #FF0000), an image URL (jpg/png/svg), or an emoji',
+                },
+            )
+            .optional(),
         fields: z.record(z.string(), z.any()).optional(),
         groupBy: z.string().optional(),
         actions: z.array(actionSchema).optional(),
