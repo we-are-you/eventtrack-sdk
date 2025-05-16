@@ -4145,7 +4145,6 @@ var EventTrack = class _EventTrack {
       };
     }
     const eventData = { ...validatedData.data };
-    eventData.date = (/* @__PURE__ */ new Date()).toISOString();
     const url = new URL("/openapi/events", this.apiUrl);
     const response = await fetch(url, {
       method: "POST",

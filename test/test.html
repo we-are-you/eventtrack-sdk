@@ -109,7 +109,6 @@
             <button onclick="testWithActions()">Log with Actions</button>
             <button onclick="testWithGrouping()">Log with Grouping</button>
             <button onclick="testWithJson()">Log with JSON</button>
-            <button onclick="testWithCustomDate()">Log with Custom Date</button>
         </div>
 
         <div class="test-section">
@@ -279,14 +278,6 @@
                     })
 
                     logResult('Event with JSON', result)
-                }
-
-                window.testWithCustomDate = async function () {
-                    const result = await tracker.log({
-                        title: 'Custom Date Event Test',
-                        date: new Date('2025-01-01'),
-                    })
-                    logResult('Event with custom date', result)
                 }
 
                 window.testWithHexIcon = async function () {

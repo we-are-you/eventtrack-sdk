@@ -62,8 +62,7 @@ export class EventTrack {
             }
         }
 
-        const eventData: EventData & { date?: string } = { ...validatedData.data }
-        eventData.date = new Date().toISOString()
+        const eventData: EventData = { ...validatedData.data }
 
         const url = new URL('/openapi/events', this.apiUrl)
         const response = await fetch(url, {

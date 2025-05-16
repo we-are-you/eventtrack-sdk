@@ -1,6 +1,6 @@
 {
   "name": "@wru/eventtrack",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
   "main": "./dist/cjs/index.js",

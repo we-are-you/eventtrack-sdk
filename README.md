@@ -61,7 +61,6 @@ Events in EventTrack SDK follow a strict schema for consistency and reliability:
 ### Optional Fields
 
 - `category` (string): Event category, minimum 3 characters
-- `date` (Date): Event timestamp, defaults to current time
 - `notify` (boolean): Whether the event should trigger notifications
 - `fields` (object): Custom key-value pairs for additional data
 - `groupBy` (string): Group events by a field key or 'category'
@@ -76,7 +75,6 @@ Events in EventTrack SDK follow a strict schema for consistency and reliability:
 - `groupBy` must reference either:
     - An existing key in the `fields` object
     - The string 'category' when category is set
-- All dates are automatically converted to ISO format
 
 ## Support
 
