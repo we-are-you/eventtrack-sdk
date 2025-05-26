@@ -1,6 +1,6 @@
 {
   "name": "@wru/eventtrack",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -33,7 +33,7 @@
     "tracking",
     "sdk"
   ],
-  "author": "Christian Linke <info@we-are-you.de>",
+  "author": "Christian Linke <christian@we-are-you.de>",
   "private": false,
   "license": "SEE LICENSE IN LICENSE",
   "repository": {

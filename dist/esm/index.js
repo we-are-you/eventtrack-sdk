@@ -4145,7 +4145,7 @@ var EventTrack = class _EventTrack {
       };
     }
     const eventData = { ...validatedData.data };
-    const url = new URL("/openapi/events", this.apiUrl);
+    const url = new URL("/api/v1/events", this.apiUrl);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -4161,22 +4161,6 @@ var EventTrack = class _EventTrack {
       };
     }
     return await response.json();
-  }
-  /**
-   * Sends a ping event
-   * @returns Promise that resolves when the ping is complete
-   */
-  async ping() {
-    const url = new URL("/openapi/ping", this.apiUrl);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to ping: ${response.statusText}`);
-    }
   }
 };
 export {

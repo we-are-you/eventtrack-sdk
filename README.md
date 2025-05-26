@@ -12,6 +12,8 @@ npm install @wru/eventtrack
 
 ## Usage
 
+### Using the SDK
+
 ```javascript
 import { EventTrack } from '@wru/eventtrack'
 
@@ -45,9 +47,28 @@ await tracker.log({
         { url: 'https://example.com/edit', label: 'Edit Document' },
     ],
 })
+```
 
-// Check server connectivity
-await tracker.ping()
+### Direct API Requests
+
+You can also make direct HTTP requests to the EventTrack API without using the SDK:
+
+```javascript
+await fetch('https://eventtrack.dev/api/v1/events', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer your-api-key',
+    },
+    body: JSON.stringify({
+        title: 'Your Event Title',
+        category: 'optional-category',
+        fields: {
+            // Your custom fields here
+        },
+        // Other optional fields
+    }),
+})
 ```
 
 ## Event Schema
@@ -78,7 +99,7 @@ Events in EventTrack SDK follow a strict schema for consistency and reliability:
 
 ## Support
 
-For support inquiries, please contact support@eventtrack.dev
+For support inquiries, please contact christian@eventtrack.dev
 
 ## License
 

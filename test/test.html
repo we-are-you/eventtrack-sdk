@@ -127,11 +127,6 @@
             <button onclick="testInvalidGroupBy()">Invalid GroupBy (Error)</button>
         </div>
 
-        <div class="test-section">
-            <h2>Ping Test</h2>
-            <button onclick="testPing()">Send Ping</button>
-        </div>
-
         <div id="results">
             <em>Test results will appear here...</em>
         </div>
@@ -343,11 +338,6 @@
                         groupBy: 'nonexistent',
                     })
                     logResult('Invalid groupBy error', result)
-                }
-
-                window.testPing = async function () {
-                    const result = await tracker.ping()
-                    logResult('Ping', result)
                 }
             }
         </script>
