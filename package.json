@@ -1,6 +1,6 @@
 {
   "name": "@wru/eventtrack",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -54,5 +54,8 @@
     "http-server": "^14.1.1",
     "esbuild": "^0.20.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }
