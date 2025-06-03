@@ -1,6 +1,6 @@
 {
   "name": "@wru/eventtrack",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Event tracking SDK with ESM and CJS support",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -29,8 +29,11 @@
     "dev": "npm run build && http-server . -p 3001 -c-1 --cors"
   },
   "keywords": [
-    "events",
+    "eventtrack",
+    "event",
+    "logging",
     "tracking",
+    "events",
     "sdk"
   ],
   "author": "Christian Linke <christian@we-are-you.de>",
@@ -52,7 +55,7 @@
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "prettier": "^3.4.2",
     "http-server": "^14.1.1",
-    "esbuild": "^0.20.0"
+    "esbuild": "^0.25.5"
   },
   "sideEffects": false,
   "publishConfig": {
